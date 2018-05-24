@@ -76,7 +76,7 @@ static const struct vm_exit_dispatch dispatch_table[] = {
 		.handler = unhandled_vmexit_handler},
 	[VMX_EXIT_REASON_VMCALL] = {
 		.handler = vmcall_vmexit_handler},
-	[VMX_EXIT_REASON_VMCLEAR] {
+	[VMX_EXIT_REASON_VMCLEAR] = {
 		.handler = unhandled_vmexit_handler},
 	[VMX_EXIT_REASON_VMLAUNCH] = {
 		.handler = unhandled_vmexit_handler},
@@ -156,10 +156,16 @@ static const struct vm_exit_dispatch dispatch_table[] = {
 		.need_exit_qualification = 1}
 };
 
-struct vm_exit_dispatch *vmexit_handler(struct vcpu *vcpu)
+int vmexit_handler(struct vcpu *vcpu)
 {
 	struct vm_exit_dispatch *dispatch = HV_NULL;
 	uint16_t basic_exit_reason;
+	int ret;
+
+	if ((int)get_cpu_id() != vcpu->pcpu_id) {
+		pr_fatal("vcpu is not running on its pcpu!");
+		return -EINVAL;
+	}
 
 	/* Obtain interrupt info */
 	vcpu->arch_vcpu.idt_vectoring_info =
@@ -190,8 +196,19 @@ struct vm_exit_dispatch *vmexit_handler(struct vcpu *vcpu)
 	/* Update current vcpu in VM that caused vm exit */
 	vcpu->vm->current_vcpu = vcpu;
 
-	/* Return pointer to exit dispatch entry */
-	return dispatch;
+	/* exit dispatch handling */
+	if (basic_exit_reason == VMX_EXIT_REASON_EXTERNAL_INTERRUPT) {
+		/* Handling external_interrupt
+		 * should disable intr
+		 */
+		ret = dispatch->handler(vcpu);
+	} else {
+		CPU_IRQ_ENABLE();
+		ret = dispatch->handler(vcpu);
+		CPU_IRQ_DISABLE();
+	}
+
+	return ret;
 }
 
 static int unhandled_vmexit_handler(__unused struct vcpu *vcpu)
@@ -236,7 +253,7 @@ static int write_cr0(struct vcpu *vcpu, uint64_t value)
 	 * transition from real mode to paged-protected mode
 	 */
 	if (!is_vcpu_bsp(vcpu) &&
-	    (vcpu->arch_vcpu.cpu_mode == REAL_MODE) &&
+	    (vcpu->arch_vcpu.cpu_mode == CPU_MODE_REAL) &&
 	    (value & CR0_PG) && (value & CR0_PE)) {
 		/* Enable protected mode */
 		value32 = exec_vmread(VMX_ENTRY_CONTROLS);
