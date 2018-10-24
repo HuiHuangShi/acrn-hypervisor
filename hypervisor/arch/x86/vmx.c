@@ -362,8 +362,9 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 	uint32_t entry_ctrls;
 	bool old_paging_enabled = is_paging_enabled(vcpu);
 	uint64_t cr0_changed_bits = vcpu_get_cr0(vcpu) ^ cr0;
+	uint64_t cr0_reg = cr0;
 
-	if (!is_cr0_write_valid(vcpu, cr0)) {
+	if (!is_cr0_write_valid(vcpu, cr0_reg)) {
 		pr_dbg("Invalid cr0 write operation from guest");
 		vcpu_inject_gp(vcpu, 0U);
 		return;
@@ -373,9 +374,9 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 	 * When loading a control register, reserved bit should always set
 	 * to the value previously read.
 	 */
-	cr0 &= ~CR0_RESERVED_MASK;
+	cr0_reg &= ~CR0_RESERVED_MASK;
 
-	if (!old_paging_enabled && ((cr0 & CR0_PG) != 0UL)) {
+	if (!old_paging_enabled && ((cr0_reg & CR0_PG) != 0UL)) {
 		if ((vcpu_get_efer(vcpu) & MSR_IA32_EFER_LME_BIT) != 0UL) {
 			/* Enable long mode */
 			pr_dbg("VMM: Enable long mode");
@@ -390,7 +391,7 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 			load_pdptrs(vcpu);
 		} else {
 		}
-	} else if (old_paging_enabled && ((cr0 & CR0_PG) == 0UL)) {
+	} else if (old_paging_enabled && ((cr0_reg & CR0_PG) == 0UL)) {
 		if ((vcpu_get_efer(vcpu) & MSR_IA32_EFER_LME_BIT) != 0UL) {
 			/* Disable long mode */
 			pr_dbg("VMM: Disable long mode");
@@ -408,7 +409,7 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 	if ((cr0_changed_bits & (CR0_CD | CR0_NW)) != 0UL) {
 		/* No action if only CR0.NW is cr0_changed_bits */
 		if ((cr0_changed_bits & CR0_CD) != 0UL) {
-			if ((cr0 & CR0_CD) != 0UL) {
+			if ((cr0_reg & CR0_CD) != 0UL) {
 				/*
 				 * When the guest requests to set CR0.CD, we don't allow
 				 * guest's CR0.CD to be actually set, instead, we write guest
@@ -433,7 +434,7 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 	/* CR0 has no always off bits, except the always on bits, and reserved
 	 * bits, allow to set according to guest.
 	 */
-	cr0_vmx = cr0_always_on_mask | cr0;
+	cr0_vmx = cr0_always_on_mask | cr0_reg;
 
 	/* Don't set CD or NW bit to guest */
 	cr0_vmx &= ~(CR0_CD | CR0_NW);
@@ -444,7 +445,7 @@ void vmx_write_cr0(struct vcpu *vcpu, uint64_t cr0)
 	bitmap_clear_lock(CPU_REG_CR0, &vcpu->reg_cached);
 
 	pr_dbg("VMM: Try to write %016llx, allow to write 0x%016llx to CR0",
-		cr0, cr0_vmx);
+		cr0_reg, cr0_vmx);
 }
 
 static bool is_cr4_write_valid(struct vcpu *vcpu, uint64_t cr4)

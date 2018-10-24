@@ -205,9 +205,11 @@ static int get_excep_class(uint32_t vector)
 	}
 }
 
-int vcpu_queue_exception(struct vcpu *vcpu, uint32_t vector, uint32_t err_code)
+int vcpu_queue_exception(struct vcpu *vcpu, uint32_t vector_param, uint32_t err_code)
 {
 	struct vcpu_arch *arch_vcpu = &vcpu->arch_vcpu;
+	uint32_t vector = vector_param;
+	uint32_t err;
 	/* VECTOR_INVALID is also greater than 32 */
 	if (vector >= 32U) {
 		pr_err("invalid exception vector %d", vector);
@@ -233,16 +235,17 @@ int vcpu_queue_exception(struct vcpu *vcpu, uint32_t vector, uint32_t err_code)
 			 new_class != EXCEPTION_CLASS_BENIGN)) {
 		/* generate double fault */
 		vector = IDT_DF;
-		err_code = 0U;
+		err = 0U;
 	} else {
 		/* Trigger the given exception instead of override it with
 		 * double/triple fault. */
+		err = err_code;
 	}
 
 	arch_vcpu->exception_info.exception = vector;
 
 	if ((exception_type[vector] & EXCEPTION_ERROR_CODE_VALID) != 0U) {
-		arch_vcpu->exception_info.error = err_code;
+		arch_vcpu->exception_info.error = err;
 	} else {
 		arch_vcpu->exception_info.error = 0U;
 	}
