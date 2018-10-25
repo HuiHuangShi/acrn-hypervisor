@@ -135,7 +135,7 @@ static int vcpu_inject_vlapic_int(struct vcpu *vcpu)
 		return 0;
 	}
 
-	if (!(vector >= 16U && vector <= 255U)) {
+	if (!((vector >= 16U) && (vector <= 255U))) {
 		dev_dbg(ACRN_DBG_INTR, "invalid vector %d from local APIC",
 				vector);
 		return -1;
@@ -222,15 +222,15 @@ int vcpu_queue_exception(struct vcpu *vcpu, uint32_t vector, uint32_t err_code)
 	 * double fault */
 	prev_class = get_excep_class(prev_vector);
 	new_class = get_excep_class(vector);
-	if (prev_vector == IDT_DF &&
-		new_class != EXCEPTION_CLASS_BENIGN) {
+	if ((prev_vector == IDT_DF) &&
+		(new_class != EXCEPTION_CLASS_BENIGN)) {
 		/* triple fault happen - shutdwon mode */
 		vcpu_make_request(vcpu, ACRN_REQUEST_TRP_FAULT);
 		return 0;
-	} else if ((prev_class == EXCEPTION_CLASS_CONT &&
-			new_class == EXCEPTION_CLASS_CONT) ||
-			(prev_class == EXCEPTION_CLASS_PF &&
-			 new_class != EXCEPTION_CLASS_BENIGN)) {
+	} else if (((prev_class == EXCEPTION_CLASS_CONT) &&
+			(new_class == EXCEPTION_CLASS_CONT)) ||
+			((prev_class == EXCEPTION_CLASS_PF) &&
+			 (new_class != EXCEPTION_CLASS_BENIGN))) {
 		/* generate double fault */
 		vector = IDT_DF;
 		err_code = 0U;
@@ -270,7 +270,7 @@ static int vcpu_inject_hi_exception(struct vcpu *vcpu)
 {
 	uint32_t vector = vcpu->arch_vcpu.exception_info.exception;
 
-	if (vector == IDT_MC || vector == IDT_BP || vector == IDT_DB) {
+	if ((vector == IDT_MC) || (vector == IDT_BP) || (vector == IDT_DB)) {
 		vcpu_inject_exception(vcpu, vector);
 		return 1;
 	}
@@ -495,7 +495,7 @@ int acrn_handle_pending_request(struct vcpu *vcpu)
 		 * the virtual interrupt injection conditions are satified,
 		 * then inject through vmcs.
 		 */
-		if (!is_apicv_intr_delivery_supported() &&
+		if ((!is_apicv_intr_delivery_supported()) &&
 			bitmap_test_and_clear_lock(ACRN_REQUEST_EVENT,
 						pending_req_bits)) {
 			ret = vcpu_inject_vlapic_int(vcpu);
@@ -526,10 +526,10 @@ INTR_WIN:
 		return ret;
 	}
 
-	if (!bitmap_test(ACRN_REQUEST_EXTINT,
-						pending_req_bits) &&
+	if ((!bitmap_test(ACRN_REQUEST_EXTINT,
+						pending_req_bits)) &&
 		(is_apicv_intr_delivery_supported() ||
-		!vcpu_pending_request(vcpu))) {
+		(!vcpu_pending_request(vcpu)))) {
 		return ret;
 	}
 

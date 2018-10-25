@@ -333,7 +333,7 @@ void dispatch_interrupt(struct intr_excp_ctx *ctx)
 	 * < NR_IRQS, which is the irq number it bound with;
 	 * Any other value means there is something wrong.
 	 */
-	if (irq == IRQ_INVALID || irq >= NR_IRQS) {
+	if ((irq == IRQ_INVALID) || (irq >= NR_IRQS)) {
 		goto ERR;
 	}
 

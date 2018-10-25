@@ -79,20 +79,20 @@ handle_virt_irqline(const struct vm *vm, uint16_t target_vmid,
 	uint32_t intr_type;
 	struct vm *target_vm = get_vm_from_vmid(target_vmid);
 
-	if ((param == NULL) || target_vm == NULL) {
+	if ((param == NULL) || (target_vm == NULL)) {
 		return -EINVAL;
 	}
 
 	/* Check valid irq */
-	if (param->intr_type == ACRN_INTR_TYPE_IOAPIC
-			&& param->ioapic_irq >= vioapic_pincount(vm)) {
+	if ((param->intr_type == ACRN_INTR_TYPE_IOAPIC)
+			&& (param->ioapic_irq >= vioapic_pincount(vm))) {
 		return -EINVAL;
 	}
 
-	if (param->intr_type == ACRN_INTR_TYPE_ISA
-			&& (param->pic_irq >= vpic_pincount()
-			|| (param->ioapic_irq != (~0U)
-			&& param->ioapic_irq >= vioapic_pincount(vm)))) {
+	if ((param->intr_type == ACRN_INTR_TYPE_ISA)
+			&& ((param->pic_irq >= vpic_pincount())
+			|| ((param->ioapic_irq != (~0U))
+			&& (param->ioapic_irq >= vioapic_pincount(vm))))) {
 		return -EINVAL;
 	}
 

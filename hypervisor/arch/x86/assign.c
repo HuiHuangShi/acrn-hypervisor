@@ -718,8 +718,8 @@ int ptdev_add_intx_remapping(struct vm *vm, uint8_t virt_pin, uint8_t phys_pin,
 {
 	struct ptdev_remapping_info *entry;
 
-	if ((!pic_pin && virt_pin >= vioapic_pincount(vm))
-			|| (pic_pin && virt_pin >= vpic_pincount())) {
+	if (((!pic_pin) && (virt_pin >= vioapic_pincount(vm)))
+			|| (pic_pin && (virt_pin >= vpic_pincount()))) {
 		pr_err("ptdev_add_intx_remapping fails!\n");
 		return -EINVAL;
 	}

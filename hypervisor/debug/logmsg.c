@@ -96,10 +96,10 @@ void do_logmsg(uint32_t severity, const char *fmt, ...)
 					(severity <= console_loglevel));
 	do_mem_log = (((logmsg.flags & LOG_FLAG_MEMORY) != 0U) &&
 					(severity <= mem_loglevel));
-	do_npk_log = ((logmsg.flags & LOG_FLAG_NPK) != 0U &&
+	do_npk_log = (((logmsg.flags & LOG_FLAG_NPK) != 0U) &&
 					(severity <= npk_loglevel));
 
-	if (!do_console_log && !do_mem_log && !do_npk_log) {
+	if ((!do_console_log) && (!do_mem_log) && (!do_npk_log)) {
 		return;
 	}
 

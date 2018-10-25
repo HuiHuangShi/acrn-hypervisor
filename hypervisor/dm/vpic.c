@@ -135,7 +135,7 @@ static void vpic_notify_intr(struct acrn_vpic *vpic)
 	 */
 	i8259 = &vpic->i8259[1];
 	pin = vpic_get_highest_irrpin(i8259);
-	if (!i8259->intr_raised && (pin < NR_VPIC_PINS_PER_CHIP)) {
+	if ((!i8259->intr_raised) && (pin < NR_VPIC_PINS_PER_CHIP)) {
 		dev_dbg(ACRN_DBG_PIC,
 		"pic slave notify pin = %hhu (imr 0x%x irr 0x%x isr 0x%x)\n",
 		pin, i8259->mask, i8259->request, i8259->service);
@@ -157,7 +157,7 @@ static void vpic_notify_intr(struct acrn_vpic *vpic)
 	 */
 	i8259 = &vpic->i8259[0];
 	pin = vpic_get_highest_irrpin(i8259);
-	if (!i8259->intr_raised && (pin < NR_VPIC_PINS_PER_CHIP)) {
+	if ((!i8259->intr_raised) && (pin < NR_VPIC_PINS_PER_CHIP)) {
 		dev_dbg(ACRN_DBG_PIC,
 		"pic master notify pin = %hhu (imr 0x%x irr 0x%x isr 0x%x)\n",
 		pin, i8259->mask, i8259->request, i8259->service);

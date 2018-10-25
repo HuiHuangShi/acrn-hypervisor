@@ -119,9 +119,9 @@ int check_vmx_mmu_cap(void)
 		return -ENODEV;
 	}
 
-	if (!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID) ||
-		!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID_SINGLE_CONTEXT) ||
-		!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID_GLOBAL_CONTEXT)) {
+	if ((!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID)) ||
+		(!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID_SINGLE_CONTEXT)) ||
+		(!cpu_has_vmx_vpid_cap(VMX_VPID_INVVPID_GLOBAL_CONTEXT))) {
 		pr_fatal("%s, invvpid not supported\n", __func__);
 		return -ENODEV;
 	}

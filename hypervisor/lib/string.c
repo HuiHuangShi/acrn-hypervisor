@@ -442,7 +442,7 @@ char *strstr_s (const char *str1, size_t maxlen1,
 	 * str2 points to a string with zero length, or
 	 * str2 equals str1, return str1
 	 */
-	if (len2 == 0U || str1 == str2) {
+	if ((len2 == 0U) || (str1 == str2)) {
 		return (char *)str1;
 	}
 

@@ -103,7 +103,7 @@ int add_timer(struct hv_timer *timer)
 
 void del_timer(struct hv_timer *timer)
 {
-	if ((timer != NULL) && !list_empty(&timer->node)) {
+	if ((timer != NULL) && (!list_empty(&timer->node))) {
 		list_del_init(&timer->node);
 	}
 }

@@ -467,8 +467,8 @@ static void bsp_boot_post(void)
 	}
 
 	/* Warn for security feature not ready */
-	if (!cpu_has_cap(X86_FEATURE_IBRS_IBPB) &&
-			!cpu_has_cap(X86_FEATURE_STIBP)) {
+	if (!(cpu_has_cap(X86_FEATURE_IBRS_IBPB)) &&
+			(!cpu_has_cap(X86_FEATURE_STIBP))) {
 		pr_fatal("SECURITY WARNING!!!!!!");
 		pr_fatal("Please apply the latest CPU uCode patch!");
 	}

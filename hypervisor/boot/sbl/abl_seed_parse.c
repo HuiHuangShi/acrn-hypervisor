@@ -35,8 +35,8 @@ static void parse_seed_list_abl(void *param_addr)
 		goto fail;
 	}
 
-	if (sec_info->num_seeds < 2U ||
-			sec_info->num_seeds > ABL_SEED_LIST_MAX) {
+	if ((sec_info->num_seeds < 2U) ||
+			(sec_info->num_seeds > ABL_SEED_LIST_MAX)) {
 		goto fail;
 	}
 

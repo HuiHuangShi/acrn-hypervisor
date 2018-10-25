@@ -351,7 +351,7 @@ static uint32_t vlapic_get_ccr(struct acrn_vlapic *vlapic)
 
 	vtimer = &vlapic->vtimer;
 
-	if ((vtimer->tmicr != 0U) && !vlapic_lvtt_tsc_deadline(vlapic)) {
+	if ((vtimer->tmicr != 0U) && (!vlapic_lvtt_tsc_deadline(vlapic))) {
 		uint64_t fire_tsc = vtimer->timer.fire_tsc;
 
 		if (now < fire_tsc) {
@@ -483,7 +483,7 @@ vlapic_set_intr_ready(struct acrn_vlapic *vlapic, uint32_t vector, bool level)
 	if (is_apicv_intr_delivery_supported()) {
 		pending_intr = apicv_set_intr_ready(vlapic, vector);
 		if ((pending_intr != 0)
-			&& is_apicv_posted_intr_supported()
+			&& (is_apicv_posted_intr_supported())
 			&& (get_cpu_id() != vlapic->vcpu->pcpu_id)) {
 			/*
 			 * Send interrupt to vCPU via posted interrupt way:

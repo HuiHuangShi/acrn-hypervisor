@@ -144,8 +144,8 @@ static void modify_or_del_pde(uint64_t *pdpte,
 			panic("invalid op, pde not present");
 		}
 		if (pde_large(*pde) != 0UL) {
-			if (vaddr_next > vaddr_end ||
-					!mem_aligned_check(vaddr, PDE_SIZE)) {
+			if ((vaddr_next > vaddr_end) ||
+					(!mem_aligned_check(vaddr, PDE_SIZE))) {
 				int ret = split_large_page(pde, IA32E_PD, ptt);
 				if (ret != 0) {
 					panic("split large PDE failed");
@@ -195,8 +195,8 @@ static void modify_or_del_pdpte(uint64_t *pml4e,
 			panic("invalid op, pdpte not present");
 		}
 		if (pdpte_large(*pdpte) != 0UL) {
-			if (vaddr_next > vaddr_end ||
-					!mem_aligned_check(vaddr, PDPTE_SIZE)) {
+			if ((vaddr_next > vaddr_end) ||
+					(!mem_aligned_check(vaddr, PDPTE_SIZE))) {
 				int ret = split_large_page(pdpte, IA32E_PDPT, ptt);
 				if (ret != 0) {
 					panic("split large PDPTE failed");
@@ -311,7 +311,7 @@ static void add_pde(uint64_t *pdpte, uint64_t paddr_start,
 
 		if (pgentry_present(ptt, *pde) == 0UL) {
 			if (mem_aligned_check(paddr, PDE_SIZE) &&
-				mem_aligned_check(vaddr, PDE_SIZE) &&
+				(mem_aligned_check(vaddr, PDE_SIZE)) &&
 				(vaddr_next <= vaddr_end)) {
 				set_pgentry(pde, paddr | (prot | PAGE_PSE));
 				if (vaddr_next < vaddr_end) {
@@ -357,7 +357,7 @@ static void add_pdpte(uint64_t *pml4e, uint64_t paddr_start,
 
 		if (pgentry_present(ptt, *pdpte) == 0UL) {
 			if (mem_aligned_check(paddr, PDPTE_SIZE) &&
-				mem_aligned_check(vaddr, PDPTE_SIZE) &&
+				(mem_aligned_check(vaddr, PDPTE_SIZE)) &&
 				(vaddr_next <= vaddr_end)) {
 				set_pgentry(pdpte, paddr | (prot | PAGE_PSE));
 				if (vaddr_next < vaddr_end) {

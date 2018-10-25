@@ -165,7 +165,7 @@ static void update_ept_mem_type(struct vcpu *vcpu)
 	 * - when def_type.E is clear, UC memory type is applied
 	 * - when def_type.FE is clear, MTRRdefType.type is applied
 	 */
-	if (!is_mtrr_enabled(vcpu) || !is_fixed_range_mtrr_enabled(vcpu)) {
+	if ((!is_mtrr_enabled(vcpu)) || (!is_fixed_range_mtrr_enabled(vcpu))) {
 		(void)update_ept(vcpu->vm, 0U, MAX_FIXED_RANGE_ADDR,
 			get_default_memory_type(vcpu));
 		return;

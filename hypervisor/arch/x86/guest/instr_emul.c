@@ -425,7 +425,7 @@ static bool is_desc_valid(struct seg_desc *desc, uint32_t prot)
 
 	/* The descriptor type must indicate a code/data segment. */
 	type = seg_desc_type(desc->access);
-	if (type < 16U || type > 31U) {
+	if ((type < 16U) || (type > 31U)) {
 		return false;
 	}
 
@@ -476,8 +476,8 @@ static int vie_calculate_gla(enum vm_cpu_mode cpu_mode, enum cpu_reg_name seg,
 	 * In 64-bit mode all segments except %fs and %gs have a segment
 	 * base address of 0.
 	 */
-	if (cpu_mode == CPU_MODE_64BIT && seg != CPU_REG_FS &&
-	    seg != CPU_REG_GS) {
+	if ((cpu_mode == CPU_MODE_64BIT) && (seg != CPU_REG_FS) &&
+	    (seg != CPU_REG_GS)) {
 		segbase = 0UL;
 	} else {
 		segbase = desc->base;
@@ -1886,7 +1886,7 @@ static int decode_modrm(struct instr_emul_vie *vie, enum vm_cpu_mode cpu_mode)
 	vie->reg |= (vie->rex_r << 3);
 
 	/* SIB */
-	if (vie->mod != VIE_MOD_DIRECT && vie->rm == VIE_RM_SIB) {
+	if ((vie->mod != VIE_MOD_DIRECT) && (vie->rm == VIE_RM_SIB)) {
 		goto done;
 	}
 

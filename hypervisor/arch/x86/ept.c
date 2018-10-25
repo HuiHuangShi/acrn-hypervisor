@@ -29,7 +29,7 @@ void free_ept_mem(uint64_t *pml4_page)
 		for (pdpte_idx = 0U; pdpte_idx < PTRS_PER_PDPTE; pdpte_idx++) {
 			pdpte = pdpt_page + pdpte_idx;
 			if ((pgentry_present(PTT_EPT, *pdpte) == 0UL) ||
-					pdpte_large(*pdpte) != 0UL) {
+					(pdpte_large(*pdpte) != 0UL)) {
 				continue;
 			}
 			pd_page = pdpte_page_vaddr(*pdpte);
@@ -37,7 +37,7 @@ void free_ept_mem(uint64_t *pml4_page)
 			for (pde_idx = 0U; pde_idx < PTRS_PER_PDE; pde_idx++) {
 				pde = pd_page + pde_idx;
 				if ((pgentry_present(PTT_EPT, *pde) == 0UL) ||
-						pde_large(*pde) != 0UL) {
+						(pde_large(*pde) != 0UL)) {
 					continue;
 				}
 				pt_page = pde_page_vaddr(*pde);

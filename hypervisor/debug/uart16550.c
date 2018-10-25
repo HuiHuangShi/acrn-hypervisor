@@ -158,7 +158,7 @@ static void uart16550_putc(char c)
 	/* Ensure there are no further Transmit buffer write requests */
 	do {
 		reg = uart16550_read_reg(uart_base_address, UART16550_LSR);
-	} while ((reg & LSR_THRE) == 0U || (reg & LSR_TEMT) == 0U);
+	} while (((reg & LSR_THRE) == 0U) || ((reg & LSR_TEMT) == 0U));
 
 	temp = (uint8_t)c;
 	/* Transmit the character. */

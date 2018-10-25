@@ -98,14 +98,14 @@ vioapic_set_pinstate(struct acrn_vioapic *vioapic, uint16_t pin, uint32_t level)
 		bitmap_clear_nolock(pin & 0x3FU,
 				&vioapic->pin_state[pin >> 6U]);
 		if (((rte.full & IOAPIC_RTE_INTPOL) != 0UL)
-			&& old_lvl != level) {
+			&& (old_lvl != level)) {
 			vioapic_send_intr(vioapic, pin);
 		}
 	} else {
 		/* set pin_state and deliver intrrupt according to polarity */
 		bitmap_set_nolock(pin & 0x3FU, &vioapic->pin_state[pin >> 6U]);
 		if (((rte.full & IOAPIC_RTE_INTPOL) == 0UL)
-			&& old_lvl != level) {
+			&& (old_lvl != level)) {
 			vioapic_send_intr(vioapic, pin);
 		}
 	}
@@ -260,8 +260,8 @@ static inline bool vioapic_need_intr(struct acrn_vioapic *vioapic, uint16_t pin)
 	rte = vioapic->rtbl[pin];
 	lvl = (uint32_t)bitmap_test(pin & 0x3FU, &vioapic->pin_state[pin >> 6U]);
 
-	return !!((((rte.full & IOAPIC_RTE_INTPOL) != 0UL) && lvl == 0U) ||
-		(((rte.full & IOAPIC_RTE_INTPOL) == 0UL) && lvl != 0U));
+	return ((((rte.full & IOAPIC_RTE_INTPOL) != 0UL) && (lvl == 0U)) ||
+		(((rte.full & IOAPIC_RTE_INTPOL) == 0UL) && (lvl != 0U)));
 }
 
 /*

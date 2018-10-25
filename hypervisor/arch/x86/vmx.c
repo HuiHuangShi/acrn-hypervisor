@@ -34,8 +34,8 @@ bool is_vmx_disabled(void)
 	msr_val = msr_read(MSR_IA32_FEATURE_CONTROL);
 
 	/* Check if feature control is locked and vmx cannot be enabled */
-	if ((msr_val & MSR_IA32_FEATURE_CONTROL_LOCK) != 0U &&
-		(msr_val & MSR_IA32_FEATURE_CONTROL_VMX_NO_SMX) == 0U) {
+	if (((msr_val & MSR_IA32_FEATURE_CONTROL_LOCK) != 0U) &&
+	    ((msr_val & MSR_IA32_FEATURE_CONTROL_VMX_NO_SMX) == 0U)) {
 		return true;
 	}
 	return false;
@@ -314,7 +314,7 @@ static bool is_cr0_write_valid(struct vcpu *vcpu, uint64_t cr0)
 	 * CR0.PG = 1, CR4.PAE = 0 and IA32_EFER.LME = 1 is invalid.
 	 * CR0.PE = 0 and CR0.PG = 1 is invalid.
 	 */
-	if (((cr0 & CR0_PG) != 0UL) && !is_pae(vcpu)
+	if (((cr0 & CR0_PG) != 0UL) && (!is_pae(vcpu))
 		&& ((vcpu_get_efer(vcpu) & MSR_IA32_EFER_LME_BIT) != 0UL)) {
 		return false;
 	}
@@ -521,7 +521,7 @@ void vmx_write_cr4(struct vcpu *vcpu, uint64_t cr4)
 
 	if (((cr4 ^ old_cr4) & (CR4_PGE | CR4_PSE | CR4_PAE |
 			CR4_SMEP | CR4_SMAP | CR4_PKE)) != 0UL) {
-		if (((cr4 & CR4_PAE) != 0UL) && is_paging_enabled(vcpu) &&
+		if (((cr4 & CR4_PAE) != 0UL) && (is_paging_enabled(vcpu)) &&
 				(is_long_mode(vcpu))) {
 			load_pdptrs(vcpu);
 		}

@@ -137,7 +137,7 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 
 		/* check for nx, since for 32-bit paing, the XD bit is
 		 * reserved(0), use the same logic as PAE/4-level paging */
-		if (pw_info->is_inst_fetch && pw_info->nxe &&
+		if ((pw_info->is_inst_fetch) && (pw_info->nxe) &&
 		    ((entry & PAGE_NX) != 0U)) {
 			fault = 1;
 			goto out;
@@ -164,12 +164,12 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 	 * Also SMAP/SMEP only impact the supervisor-mode access.
 	 */
 	/* if smap is enabled and supervisor-mode access */
-	if (pw_info->is_smap_on && !pw_info->is_user_mode_access &&
+	if (pw_info->is_smap_on && (!pw_info->is_user_mode_access) &&
 			is_user_mode_addr) {
 		bool rflags_ac = ((vcpu_get_rflags(vcpu) & RFLAGS_AC) != 0UL);
 
 		/* read from user mode address, eflags.ac = 0 */
-		if (!pw_info->is_write_access && !rflags_ac) {
+		if ((!pw_info->is_write_access) && (!rflags_ac)) {
 			fault = 1;
 			goto out;
 		}
@@ -177,7 +177,7 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 		/* write to user mode address */
 		if (pw_info->is_write_access) {
 			/* cr0.wp = 0, eflags.ac = 0 */
-			if (!pw_info->wp && !rflags_ac) {
+			if ((!pw_info->wp) && (!rflags_ac)) {
 				fault = 1;
 				goto out;
 			}
@@ -185,13 +185,13 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 			/* cr0.wp = 1, eflags.ac = 1, r/w flag is 0
 			 * on any paging structure entry
 			 */
-			if (pw_info->wp && rflags_ac && !is_page_rw_flags_on) {
+			if (pw_info->wp && rflags_ac && (!is_page_rw_flags_on)) {
 				fault = 1;
 				goto out;
 			}
 
 			/* cr0.wp = 1, eflags.ac = 0 */
-			if (pw_info->wp && !rflags_ac) {
+			if (pw_info->wp && (!rflags_ac)) {
 				fault = 1;
 				goto out;
 			}
@@ -199,7 +199,7 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 	}
 
 	/* instruction fetch from user-mode address, smep on */
-	if (pw_info->is_smep_on && !pw_info->is_user_mode_access &&
+	if (pw_info->is_smep_on && (!pw_info->is_user_mode_access) &&
 			is_user_mode_addr && pw_info->is_inst_fetch) {
 		fault = 1;
 		goto out;
