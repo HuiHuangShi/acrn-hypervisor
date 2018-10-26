@@ -137,7 +137,7 @@ static int local_gva2gpa_common(struct vcpu *vcpu, struct page_walk_info *pw_inf
 
 		/* check for nx, since for 32-bit paing, the XD bit is
 		 * reserved(0), use the same logic as PAE/4-level paging */
-		if ((pw_info->is_inst_fetch) && (pw_info->nxe) &&
+		if (pw_info->is_inst_fetch && (pw_info->nxe) &&
 		    ((entry & PAGE_NX) != 0U)) {
 			fault = 1;
 			goto out;
