@@ -10,7 +10,7 @@
  * transfered to SOS:
  * bsp/uefi/clearlinux/acrn.conf: hvlog=2M@0x1FE00000
  */
-#define HVLOG_BUF_SIZE		(2*1024*1024)
+#define HVLOG_BUF_SIZE		(2U * 1024U * 1024U)
 
 struct logmsg {
 	uint32_t flags;

@@ -7,7 +7,7 @@
 #include <hypervisor.h>
 #include <softirq.h>
 
-#define MAX_TIMER_ACTIONS	32U
+#define MAX_TIMER_ACTIONS	32
 #define CAL_MS			10U
 #define MIN_TIMER_PERIOD_US	500U
 

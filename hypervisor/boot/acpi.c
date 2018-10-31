@@ -234,14 +234,16 @@ local_parse_madt(void *madt, uint32_t lapic_id_array[CONFIG_MAX_PCPU_NUM])
 	struct acpi_table_madt *madt_ptr;
 	void *first;
 	void *end;
+	void *entry_addr;
 	struct acpi_subtable_header *entry;
 
 	madt_ptr = (struct acpi_table_madt *)madt;
 
-	first = madt_ptr + 1;
-	end = (char *)madt_ptr + madt_ptr->header.length;
+	first = madt + sizeof(struct acpi_table_madt *);
+	end = madt + madt_ptr->header.length;
 
-	for (entry = first; (void *)entry < end; ) {
+	for (entry_addr = first; entry_addr < end; entry_addr = entry_addr + entry->length) {
+		entry = entry_addr;
 		if (entry->length < sizeof(struct acpi_subtable_header)) {
 			break;
 		}
@@ -256,8 +258,6 @@ local_parse_madt(void *madt, uint32_t lapic_id_array[CONFIG_MAX_PCPU_NUM])
 			}
 		}
 
-		entry = (struct acpi_subtable_header *)
-				(((uint64_t)entry) + entry->length);
 	}
 
 	return pcpu_num;
