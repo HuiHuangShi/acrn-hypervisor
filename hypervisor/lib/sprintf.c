@@ -321,19 +321,17 @@ static void print_decimal(struct print_param *param, int64_t value)
 	/* pointer to the next character position (+1) */
 	char *pos = digitbuff + sizeof(digitbuff);
 	/* current value in 32/64 bit */
-	union u_qword v;
-	/* next value in 32/64 bit */
-	union u_qword nv;
+	uint64_t v;
 
 	/* assume an unsigned 64 bit value */
-	v.qword = ((uint64_t)value) & param->vars.mask;
+	v = ((uint64_t)value) & param->vars.mask;
 
 	/*
 	 * assign sign and correct value if value is negative and
 	 * value must be interpreted as signed
 	 */
 	if (((param->vars.flags & PRINT_FLAG_UINT32) == 0U) && (value < 0)) {
-		v.qword = (uint64_t)-value;
+		v = (uint64_t)-value;
 		param->vars.prefix = "-";
 		param->vars.prefixlen = 1U;
 	}
@@ -351,25 +349,15 @@ static void print_decimal(struct print_param *param, int64_t value)
 		}
 	}
 
-	/* process 64 bit value as long as needed */
-	while (v.dwords.high != 0U) {
-		/* determine digits from right to left */
-		pos--;
-		*pos = (char)(v.qword % 10UL) + '0';
-		v.qword = v.qword / 10UL;
-	}
-
-	/* process 32 bit (or reduced 64 bit) value */
 	do {
 		/* determine digits from right to left. The compiler should be
 		 * able to handle a division and multiplication by the constant
 		 * 10.
 		 */
-		nv.dwords.low = v.dwords.low / 10U;
 		pos--;
-		*pos = (v.dwords.low - (10U * nv.dwords.low)) + '0';
-		v.dwords.low = nv.dwords.low;
-	} while (v.dwords.low != 0U);
+		*pos = (char)(v % 10UL) + '0';
+		v = v / 10UL;
+	} while (v != 0UL);
 
 	/* assign parameter and apply width and precision */
 	param->vars.value = pos;
