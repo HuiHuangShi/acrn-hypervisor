@@ -31,7 +31,7 @@ bool is_hypercall_from_ring0(void)
 int32_t hcall_sos_offline_cpu(struct vm *vm, uint64_t lapicid)
 {
 	struct vcpu *vcpu;
-	int i;
+	uint32_t i;
 
 	pr_info("sos offline cpu with lapicid %lld", lapicid);
 

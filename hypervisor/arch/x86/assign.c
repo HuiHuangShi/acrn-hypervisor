@@ -286,7 +286,7 @@ add_intx_remapping(struct vm *vm, uint8_t virt_pin,
 	struct ptdev_remapping_info *entry;
 	enum ptdev_vpin_source vpin_src =
 		pic_pin ? PTDEV_VPIN_PIC : PTDEV_VPIN_IOAPIC;
-	DEFINE_IOAPIC_SID(phys_sid, phys_pin, 0);
+	DEFINE_IOAPIC_SID(phys_sid, phys_pin, 0U);
 	DEFINE_IOAPIC_SID(virt_sid, virt_pin, vpin_src);
 	uint32_t phys_irq = pin_to_irq(phys_pin);
 

@@ -107,7 +107,7 @@ static inline uint8_t vpic_get_highest_irrpin(const struct i8259_reg_state *i825
 		 * If there is already an interrupt in service at the same
 		 * or higher priority then bail.
 		 */
-		if ((serviced & bit) != 0) {
+		if ((serviced & bit) != 0U) {
 			break;
 		}
 
@@ -115,7 +115,7 @@ static inline uint8_t vpic_get_highest_irrpin(const struct i8259_reg_state *i825
 		 * If an interrupt is asserted and not masked then return
 		 * the corresponding 'pin' to the caller.
 		 */
-		if (((i8259->request & bit) != 0) && ((i8259->mask & bit) == 0)) {
+		if (((i8259->request & bit) != 0U) && ((i8259->mask & bit) == 0U)) {
 			return pin;
 		}
 
@@ -222,7 +222,7 @@ static int vpic_icw1(const struct acrn_vpic *vpic, struct i8259_reg_state *i8259
 	i8259->poll = false;
 	i8259->smm = 0U;
 
-	if ((val & ICW1_SNGL) != 0) {
+	if ((val & ICW1_SNGL) != 0U) {
 		dev_dbg(ACRN_DBG_PIC, "vpic cascade mode required\n");
 		return -1;
 	}
@@ -417,7 +417,7 @@ static void vpic_set_pinstate(struct acrn_vpic *vpic, uint8_t pin,
 		i8259->pin_state[pin & 0x7U] = 0U;
 	}
 
-	lvl_trigger = ((vpic->i8259[pin >> 3U].elc & (1U << (pin & 0x7U))) != 0);
+	lvl_trigger = ((vpic->i8259[pin >> 3U].elc & (1U << (pin & 0x7U))) != 0U);
 
 	if (((old_lvl == 0U) && (level == 1U)) ||
 			((level == 1U) && (lvl_trigger == true))) {
@@ -552,7 +552,7 @@ static void vpic_pin_accepted(struct i8259_reg_state *i8259, uint8_t pin)
 {
 	i8259->intr_raised = false;
 
-	if ((i8259->elc & (1U << pin)) == 0) {
+	if ((i8259->elc & (1U << pin)) == 0U) {
 		/*only used edge trigger mode*/
 		i8259->request &= ~(uint8_t)(1U << pin);
 	}

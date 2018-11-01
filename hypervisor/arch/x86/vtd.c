@@ -749,8 +749,8 @@ static void fault_record_analysis(__unused uint64_t low, uint64_t high)
 		(dma_frcd_up_t(high) != 0U) ? "Read/Atomic" : "Write",
 		dma_frcd_up_fr(high),
 		dma_frcd_up_sid(high) >> 8,
-		(dma_frcd_up_sid(high) >> 3) & 0x1fUL,
-		dma_frcd_up_sid(high) & 0x7UL,
+		(dma_frcd_up_sid(high) >> 3) & 0x1fU,
+		dma_frcd_up_sid(high) & 0x7U,
 		low);
 #if DBG_IOMMU
 	if (iommu_ecap_dt(dmar_uint->ecap)i != 0U) {
