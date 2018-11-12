@@ -90,7 +90,7 @@ void exec_vmxon_instr(uint16_t pcpu_id)
 
 	/* Initialize vmxon page with revision id from IA32 VMX BASIC MSR */
 	tmp32 = (uint32_t)msr_read(MSR_IA32_VMX_BASIC);
-	(void)memcpy_s((uint32_t *) vmxon_region_va, 4U, (void *)&tmp32, 4U);
+	(void)memcpy_s(vmxon_region_va, 4U, &tmp32, 4U);
 
 	/* Turn on CR0.NE and CR4.VMXE */
 	CPU_CR_READ(cr0, &tmp64);

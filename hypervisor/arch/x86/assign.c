@@ -442,7 +442,7 @@ static void ptdev_intr_handle_irq(struct acrn_vm *vm,
 
 void ptdev_softirq(uint16_t pcpu_id)
 {
-	struct acrn_vcpu *vcpu = (struct acrn_vcpu *)per_cpu(vcpu, pcpu_id);
+	struct acrn_vcpu *vcpu = per_cpu(vcpu, pcpu_id);
 	struct acrn_vm *vm = vcpu->vm;
 
 	while (1) {
