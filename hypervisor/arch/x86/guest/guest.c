@@ -612,7 +612,7 @@ int prepare_vm0_memmap_and_e820(struct acrn_vm *vm)
 	uint64_t attr_uc = (EPT_RWX | EPT_UNCACHED);
 	struct e820_entry *entry;
 	uint64_t hv_hpa;
-	uint64_t *pml4_page = (uint64_t *)vm->arch_vm.nworld_eptp;
+	uint64_t *pml4_page = vm->arch_vm.nworld_eptp;
 
 	rebuild_vm0_e820();
 	dev_dbg(ACRN_DBG_GUEST,

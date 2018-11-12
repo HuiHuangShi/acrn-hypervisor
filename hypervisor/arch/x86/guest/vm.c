@@ -89,7 +89,7 @@ int create_vm(struct vm_description *vm_desc, struct acrn_vm **rtn_vm)
 
 	init_ept_mem_ops(vm);
 	vm->arch_vm.nworld_eptp = vm->arch_vm.ept_mem_ops.get_pml4_page(vm->arch_vm.ept_mem_ops.info, 0UL);
-	sanitize_pte((uint64_t *)vm->arch_vm.nworld_eptp);
+	sanitize_pte(vm->arch_vm.nworld_eptp);
 
 	/* Only for SOS: Configure VM software information */
 	/* For UOS: This VM software information is configure in DM */
@@ -113,7 +113,7 @@ int create_vm(struct vm_description *vm_desc, struct acrn_vm **rtn_vm)
 					&vm_desc->GUID[0],
 					sizeof(vm_desc->GUID));
 #ifdef CONFIG_PARTITION_MODE
-		ept_mr_add(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+		ept_mr_add(vm, vm->arch_vm.nworld_eptp,
 				vm_desc->start_hpa, 0UL, vm_desc->mem_size,
 				EPT_RWX|EPT_WB);
 		init_vm_boot_info(vm);

@@ -53,10 +53,10 @@ struct memory_ops {
 	union pgtable_pages_info *info;
 	uint64_t (*get_default_access_right)(void);
 	uint64_t (*pgentry_present)(uint64_t pte);
-	struct page *(*get_pml4_page)(const union pgtable_pages_info *info, uint64_t gpa);
-	struct page *(*get_pdpt_page)(const union pgtable_pages_info *info, uint64_t gpa);
-	struct page *(*get_pd_page)(const union pgtable_pages_info *info, uint64_t gpa);
-	struct page *(*get_pt_page)(const union pgtable_pages_info *info, uint64_t gpa);
+	uint64_t *(*get_pml4_page)(const union pgtable_pages_info *info, uint64_t gpa);
+	uint64_t *(*get_pdpt_page)(const union pgtable_pages_info *info, uint64_t gpa);
+	uint64_t *(*get_pd_page)(const union pgtable_pages_info *info, uint64_t gpa);
+	uint64_t *(*get_pt_page)(const union pgtable_pages_info *info, uint64_t gpa);
 };
 
 extern const struct memory_ops ppt_mem_ops;

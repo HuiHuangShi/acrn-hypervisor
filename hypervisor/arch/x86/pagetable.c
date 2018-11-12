@@ -22,14 +22,14 @@ static void split_large_page(uint64_t *pte, enum _page_table_level level,
 		ref_paddr = (*pte) & PDPTE_PFN_MASK;
 		paddrinc = PDE_SIZE;
 		ref_prot = (*pte) & ~PDPTE_PFN_MASK;
-		pbase = (uint64_t *)mem_ops->get_pd_page(mem_ops->info, vaddr);
+		pbase = mem_ops->get_pd_page(mem_ops->info, vaddr);
 		break;
 	case IA32E_PD:
 		ref_paddr = (*pte) & PDE_PFN_MASK;
 		paddrinc = PTE_SIZE;
 		ref_prot = (*pte) & ~PDE_PFN_MASK;
 		ref_prot &= ~PAGE_PSE;
-		pbase = (uint64_t *)mem_ops->get_pt_page(mem_ops->info, vaddr);
+		pbase = mem_ops->get_pt_page(mem_ops->info, vaddr);
 		break;
 	default:
 		panic("invalid paging table level: %d", level);
@@ -65,9 +65,9 @@ static inline void local_modify_or_del_pte(uint64_t *pte,
 /*
  * pgentry may means pml4e/pdpte/pde
  */
-static inline void construct_pgentry(uint64_t *pde, void *pd_page, uint64_t prot)
+static inline void construct_pgentry(uint64_t *pde, uint64_t *pd_page, uint64_t prot)
 {
-	sanitize_pte((uint64_t *)pd_page);
+	sanitize_pte(pd_page);
 
 	set_pgentry(pde, hva2hpa(pd_page) | prot);
 }
@@ -283,7 +283,7 @@ static void add_pde(const uint64_t *pdpte, uint64_t paddr_start, uint64_t vaddr_
 				}
 				break;	/* done */
 			} else {
-				void *pt_page = mem_ops->get_pt_page(mem_ops->info, vaddr);
+				uint64_t *pt_page = mem_ops->get_pt_page(mem_ops->info, vaddr);
 				construct_pgentry(pde, pt_page, mem_ops->get_default_access_right());
 			}
 		}
@@ -325,7 +325,7 @@ static void add_pdpte(const uint64_t *pml4e, uint64_t paddr_start, uint64_t vadd
 				}
 				break;	/* done */
 			} else {
-				void *pd_page = mem_ops->get_pd_page(mem_ops->info, vaddr);
+				uint64_t *pd_page = mem_ops->get_pd_page(mem_ops->info, vaddr);
 				construct_pgentry(pdpte, pd_page, mem_ops->get_default_access_right());
 			}
 		}
@@ -361,7 +361,7 @@ void mmu_add(uint64_t *pml4_page, uint64_t paddr_base, uint64_t vaddr_base, uint
 		vaddr_next = (vaddr & PML4E_MASK) + PML4E_SIZE;
 		pml4e = pml4e_offset(pml4_page, vaddr);
 		if (mem_ops->pgentry_present(*pml4e) == 0UL) {
-			void *pdpt_page = mem_ops->get_pdpt_page(mem_ops->info, vaddr);
+			uint64_t *pdpt_page = mem_ops->get_pdpt_page(mem_ops->info, vaddr);
 			construct_pgentry(pml4e, pdpt_page, mem_ops->get_default_access_right());
 		}
 		add_pdpte(pml4e, paddr, vaddr, vaddr_end, prot, mem_ops);

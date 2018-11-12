@@ -522,7 +522,7 @@ int register_mmio_emulation_handler(struct acrn_vm *vm,
 			 */
 			if (is_vm0(vm)) {
 				ept_mr_del(vm,
-					(uint64_t *)vm->arch_vm.nworld_eptp,
+					vm->arch_vm.nworld_eptp,
 					start, end - start);
 			}
 

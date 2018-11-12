@@ -149,7 +149,7 @@ static uint32_t update_ept(struct acrn_vm *vm, uint64_t start,
 		break;
 	}
 
-	ept_mr_modify(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+	ept_mr_modify(vm, vm->arch_vm.nworld_eptp,
 			start, size, attr, EPT_MT_MASK);
 	return attr;
 }

@@ -517,7 +517,7 @@ static int32_t set_vm_memory_region(struct acrn_vm *vm,
 		target_vm->vm_id, region->type, region->gpa,
 		region->vm0_gpa, region->size);
 
-	pml4_page = (uint64_t *)target_vm->arch_vm.nworld_eptp;
+	pml4_page = target_vm->arch_vm.nworld_eptp;
 	if (region->type != MR_DEL) {
 		hpa = gpa2hpa(vm, region->vm0_gpa);
 		if (hpa == INVALID_HPA) {
@@ -648,7 +648,7 @@ static int32_t write_protect_page(struct acrn_vm *vm,const struct wp_data *wp)
 	prot_set = (wp->set != 0U) ? 0UL : EPT_WR;
 	prot_clr = (wp->set != 0U) ? EPT_WR : 0UL;
 
-	ept_mr_modify(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+	ept_mr_modify(vm, vm->arch_vm.nworld_eptp,
 		wp->gpa, CPU_PAGE_SIZE, prot_set, prot_clr);
 
 	return 0;

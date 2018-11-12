@@ -87,7 +87,7 @@ static void create_secure_world_ept(struct acrn_vm *vm, uint64_t gpa_orig,
 	}
 
 	/* Unmap gpa_orig~gpa_orig+size from guest normal world ept mapping */
-	ept_mr_del(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+	ept_mr_del(vm, vm->arch_vm.nworld_eptp,
 			gpa_orig, size);
 
 	/* Copy PDPT entries from Normal world to Secure world
@@ -110,7 +110,7 @@ static void create_secure_world_ept(struct acrn_vm *vm, uint64_t gpa_orig,
 	sworld_pml4e = hva2hpa(sub_table_addr) | table_present;
 	set_pgentry((uint64_t *)pml4_base, sworld_pml4e);
 
-	nworld_pml4e = get_pgentry((uint64_t *)vm->arch_vm.nworld_eptp);
+	nworld_pml4e = get_pgentry(vm->arch_vm.nworld_eptp);
 
 	/*
 	 * copy PTPDEs from normal world EPT to secure world EPT,
@@ -137,7 +137,7 @@ static void create_secure_world_ept(struct acrn_vm *vm, uint64_t gpa_orig,
 	gpa = vm0_hpa2gpa(hpa);
 
 	/* Unmap trusty memory space from sos ept mapping*/
-	ept_mr_del(vm0, (uint64_t *)vm0->arch_vm.nworld_eptp,
+	ept_mr_del(vm0, vm0->arch_vm.nworld_eptp,
 			gpa, size);
 
 	/* Backup secure world info, will be used when

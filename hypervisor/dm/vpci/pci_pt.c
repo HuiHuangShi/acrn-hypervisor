@@ -69,7 +69,7 @@ static int vdev_pt_init(struct pci_vdev *vdev)
 	if (vm->iommu == NULL) {
 		if (vm->arch_vm.nworld_eptp == 0UL) {
 			vm->arch_vm.nworld_eptp = vm->arch_vm.ept_mem_ops.get_pml4_page(vm->arch_vm.ept_mem_ops.info, 0UL);
-			sanitize_pte((uint64_t *)vm->arch_vm.nworld_eptp);
+			sanitize_pte(vm->arch_vm.nworld_eptp);
 		}
 		vm->iommu = create_iommu_domain(vm->vm_id,
 			hva2hpa(vm->arch_vm.nworld_eptp), 48U);
@@ -122,14 +122,14 @@ static void vdev_pt_remap_bar(struct pci_vdev *vdev, uint32_t idx,
 	struct acrn_vm *vm = vdev->vpci->vm;
 
 	if (vdev->bar[idx].base != 0UL) {
-		ept_mr_del(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+		ept_mr_del(vm, vm->arch_vm.nworld_eptp,
 			vdev->bar[idx].base,
 			vdev->bar[idx].size);
 	}
 
 	if (new_base != 0U) {
 		/* Map the physical BAR in the guest MMIO space */
-		ept_mr_add(vm, (uint64_t *)vm->arch_vm.nworld_eptp,
+		ept_mr_add(vm, vm->arch_vm.nworld_eptp,
 			vdev->pdev.bar[idx].base, /* HPA */
 			new_base, /*GPA*/
 			vdev->bar[idx].size,
