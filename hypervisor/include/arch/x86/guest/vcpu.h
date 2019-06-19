@@ -157,7 +157,7 @@
 	for ((idx) = 0U, (vcpu) = &((vm)->hw.vcpu_array[(idx)]);	\
 		(idx) < (vm)->hw.created_vcpus;			\
 		(idx)++, (vcpu) = &((vm)->hw.vcpu_array[(idx)])) \
-		if (vcpu->state != VCPU_OFFLINE)
+		if ((vcpu)->state != VCPU_OFFLINE)
 
 enum vcpu_state {
 	VCPU_INIT,

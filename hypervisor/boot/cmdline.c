@@ -40,7 +40,7 @@ int32_t parse_hv_cmdline(void)
 			start++;
 
 		end = start + 1;
-		while (*end != ' ' && *end)
+		while ((*end != ' ') && (*end))
 			end++;
 
 		if (!handle_dbg_cmd(start, end - start)) {
@@ -48,7 +48,7 @@ int32_t parse_hv_cmdline(void)
 		}
 		start = end + 1;
 
-	} while (*end && *start);
+	} while ((*end) && (*start));
 
 	return 0;
 }

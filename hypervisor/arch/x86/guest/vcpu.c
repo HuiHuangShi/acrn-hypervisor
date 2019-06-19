@@ -41,8 +41,8 @@ inline uint64_t vcpu_get_rip(struct acrn_vcpu *vcpu)
 	struct run_context *ctx =
 		&vcpu->arch.contexts[vcpu->arch.cur_context].run_ctx;
 
-	if (bitmap_test(CPU_REG_RIP, &vcpu->reg_updated) == 0 &&
-		bitmap_test_and_set_lock(CPU_REG_RIP, &vcpu->reg_cached) == 0)
+	if ((bitmap_test(CPU_REG_RIP, &vcpu->reg_updated) == 0) &&
+		(bitmap_test_and_set_lock(CPU_REG_RIP, &vcpu->reg_cached) == 0))
 		ctx->rip = exec_vmread(VMX_GUEST_RIP);
 	return ctx->rip;
 }
@@ -75,8 +75,8 @@ inline uint64_t vcpu_get_efer(struct acrn_vcpu *vcpu)
 	struct run_context *ctx =
 		&vcpu->arch.contexts[vcpu->arch.cur_context].run_ctx;
 
-	if (bitmap_test(CPU_REG_EFER, &vcpu->reg_updated) == 0 &&
-		bitmap_test_and_set_lock(CPU_REG_EFER, &vcpu->reg_cached) == 0)
+	if ((bitmap_test(CPU_REG_EFER, &vcpu->reg_updated) == 0) &&
+		(bitmap_test_and_set_lock(CPU_REG_EFER, &vcpu->reg_cached) == 0))
 		ctx->ia32_efer = exec_vmread64(VMX_GUEST_IA32_EFER_FULL);
 	return ctx->ia32_efer;
 }
@@ -93,9 +93,9 @@ inline uint64_t vcpu_get_rflags(struct acrn_vcpu *vcpu)
 	struct run_context *ctx =
 		&vcpu->arch.contexts[vcpu->arch.cur_context].run_ctx;
 
-	if (bitmap_test(CPU_REG_RFLAGS, &vcpu->reg_updated) == 0 &&
-		bitmap_test_and_set_lock(CPU_REG_RFLAGS,
-			&vcpu->reg_cached) == 0 && vcpu->launched)
+	if ((bitmap_test(CPU_REG_RFLAGS, &vcpu->reg_updated) == 0) &&
+		(bitmap_test_and_set_lock(CPU_REG_RFLAGS,
+			&vcpu->reg_cached) == 0) && vcpu->launched)
 		ctx->rflags = exec_vmread(VMX_GUEST_RFLAGS);
 	return ctx->rflags;
 }
